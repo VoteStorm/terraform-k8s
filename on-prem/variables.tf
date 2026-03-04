@@ -14,7 +14,7 @@ variable "masters" {
 variable "workers" {
   description = "Worker 노드 수"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "masters_cpu" {

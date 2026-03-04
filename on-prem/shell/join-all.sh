@@ -11,7 +11,7 @@ multipass transfer k8s-master-0:/home/ubuntu/join-controlplane.sh ./shell/join-c
 # done
 
 # Worker Join (0 ~ )
-for i in {0..0}; do
+for i in {0..1}; do
   multipass transfer ./shell/join.sh k8s-worker-${i}:/home/ubuntu/join.sh
   multipass exec k8s-worker-${i} -- bash -c "chmod +x /home/ubuntu/join.sh && sudo bash /home/ubuntu/join.sh"
 done
