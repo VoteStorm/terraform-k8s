@@ -5,6 +5,7 @@ echo "=== Add-on Verification ==="
 
 ADDONS=(
   "metallb-system:metallb"
+  "ingress-nginx:ingress-nginx"
 )
 
 missing_any=false
