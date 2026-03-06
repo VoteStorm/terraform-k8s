@@ -4,8 +4,7 @@ if hostname | grep -q "k8s-master-0"; then
 
   kubeadm init \
     --apiserver-advertise-address "${MASTER_IP}" \
-    --upload-certs \
-    --pod-network-cidr=10.244.0.0/16
+    --upload-certs
 
   mkdir -p $HOME/.kube
   cp /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -23,7 +22,11 @@ if hostname | grep -q "k8s-master-0"; then
   tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
   rm -f cilium-linux-${CLI_ARCH}.tar.gz cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
 
-  cilium install --set ipam.mode=kubernetes
+  POD_CIDR=10.244.0.0/16
+  MASK_SIZE=24
+  cilium install --set ipam.mode=cluster-pool \
+    --set ipam.operator.clusterPoolIPv4PodCIDRList={$POD_CIDR} \
+    --set ipam.operator.clusterPoolIPv4MaskSize=$MASK_SIZE
   cilium status --wait
 
   JOIN_CMD=$(kubeadm token create --print-join-command)
