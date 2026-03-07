@@ -43,6 +43,22 @@ for addon in "${ADDONS[@]}"; do
   echo "  - ClusterIP Services: ${clusterip_services}"
 done
 
+echo ""
+echo "StorageClass [local-path]"
+if kubectl get storageclass local-path > /dev/null 2>&1; then
+  echo "  - Found"
+  is_default=$(kubectl get storageclass local-path -o jsonpath='{.metadata.annotations.storageclass\.kubernetes\.io/is-default-class}')
+  if [[ "$is_default" == "true" ]]; then
+    echo "  - Default: true"
+  else
+    echo "  - Default: false"
+    missing_any=true
+  fi
+else
+  echo "  - Not Found"
+  missing_any=true
+fi
+
 if [[ "${missing_any}" == true ]]; then
   echo ""
   echo "Warning: Some add-ons are missing or not fully verified. Please check the output above for details."
