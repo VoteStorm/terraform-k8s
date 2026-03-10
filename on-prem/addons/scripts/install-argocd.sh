@@ -4,4 +4,4 @@ helm repo update
 
 helm upgrade --install argocd argo/argo-cd \
   --namespace argocd --create-namespace \
-  -f values/argocd/argocd-values.yaml
+  -f ../values/argocd/argocd-values.yaml
