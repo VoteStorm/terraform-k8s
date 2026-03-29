@@ -1,0 +1,14 @@
+configs:
+  secret:
+    # admin
+    argocdServerAdminPassword: $2a$10$tyllVOs80cYi1pDzUvyj2OhNjpJDoydUXTqDVQyfoyLRinKS.MQyy
+  params:
+    server.insecure: true
+
+server:
+  ingress:
+    enabled: true
+    hostname: "argocd.chaos-lab.local"
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
