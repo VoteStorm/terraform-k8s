@@ -5,7 +5,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 192.168.72.224/27
+    - ${LB_CIDR}
 
 ---
 apiVersion: metallb.io/v1beta1

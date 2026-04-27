@@ -1,6 +1,16 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Multipass VM의 IP 대역에서 LoadBalancer IP 범위를 설정
+VM_IP=$(multipass list --format csv | awk -F',' 'NR>1 && $3!="--" {print $3; exit}')
+if [[ -z "$VM_IP" ]]; then
+  echo "[ERROR] Could not retrieve VM IP. Please ensure the VM is running and try again."
+  exit 1
+fi
+NETWORK=$(echo "$VM_IP" | cut -d'.' -f1-3) 
+export LB_CIDR="${NETWORK}.224/27"
+echo "[INFO] MetalLB IP Pool: $LB_CIDR"
+
 helm repo add metallb https://metallb.github.io/metallb
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add argo https://argoproj.github.io/argo-helm
@@ -13,7 +23,7 @@ kubectl wait --for condition=Established \
   crd/ipaddresspools.metallb.io \
   crd/l2advertisements.metallb.io \
   --timeout=120s
-kubectl apply -f "$SCRIPT_DIR"/values/metallb/metallb-config.yaml
+envsubst < "$SCRIPT_DIR"/values/metallb/metallb-config.yaml.tpl | kubectl apply -f -
 
 # Ingress-Nginx 설치
 helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
